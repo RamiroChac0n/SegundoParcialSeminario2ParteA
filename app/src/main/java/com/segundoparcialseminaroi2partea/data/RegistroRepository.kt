@@ -9,6 +9,8 @@ class RegistroRepository {
 
     suspend fun obtenerRegistros(forzarRecarga: Boolean = false): List<Registro> {
         // Si hay caché y no se fuerza recarga, devolver caché directamente
+        kotlinx.coroutines.delay(4000)
+        //return throw Exception("Error 500: Servid")
         if (!forzarRecarga && cache != null) {
             return cache!!
         }
