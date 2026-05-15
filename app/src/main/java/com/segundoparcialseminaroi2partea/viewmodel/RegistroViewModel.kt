@@ -14,7 +14,7 @@ class RegistroViewModel : ViewModel() {
 
     private val repository = RegistroRepository()
 
-    // Estado del listado
+    // Estado del listado - Empezamos con Loading
     private val _uiState = MutableStateFlow<RegistroUiState>(RegistroUiState.Loading)
     val uiState: StateFlow<RegistroUiState> = _uiState.asStateFlow()
 
@@ -34,10 +34,15 @@ class RegistroViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = RegistroUiState.Loading
             try {
+                // Intentamos obtener los registros del repositorio
                 val datos = repository.obtenerRegistros()
-                _uiState.value = RegistroUiState.Success(datos)
+                if (datos.isNotEmpty()) {
+                    _uiState.value = RegistroUiState.Success(datos)
+                } else {
+                    _uiState.value = RegistroUiState.Error("No hay datos disponibles.")
+                }
             } catch (e: Exception) {
-                _uiState.value = RegistroUiState.Error("No se pudo cargar la información.")
+                _uiState.value = RegistroUiState.Error("Error de conexión: ${e.message}")
             }
         }
     }
@@ -49,7 +54,8 @@ class RegistroViewModel : ViewModel() {
                 val datos = repository.obtenerRegistros(forzarRecarga = true)
                 _uiState.value = RegistroUiState.Success(datos)
             } catch (e: Exception) {
-                _uiState.value = RegistroUiState.Error("Error al actualizar.")
+                // Si falla el refresco, mantenemos lo que teníamos o mostramos error
+                _uiState.value = RegistroUiState.Error("No se pudo actualizar.")
             } finally {
                 _isRefreshing.value = false
             }
