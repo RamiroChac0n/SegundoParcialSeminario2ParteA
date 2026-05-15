@@ -1,36 +1,13 @@
 package com.segundoparcialseminaroi2partea.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -53,6 +30,7 @@ fun DetalleScreen(
     viewModel: RegistroViewModel = viewModel(),
     onBack: () -> Unit
 ) {
+    // Requerimiento Grupo 3 (API): Servicio para consumir detalle
     LaunchedEffect(registroId) {
         viewModel.cargarDetalle(registroId)
     }
@@ -66,7 +44,7 @@ fun DetalleScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Volver"
                         )
                     }
@@ -85,28 +63,23 @@ fun DetalleScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            // Requerimiento Grupo 3 (API): Manejo de carga y error
             when (val state = detalleUiState) {
-
                 is RegistroDetalleUiState.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
-
                 is RegistroDetalleUiState.Error -> {
                     Column(
                         modifier = Modifier.align(Alignment.Center),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = state.mensaje,
-                            color = MaterialTheme.colorScheme.error
-                        )
+                        Text(text = state.mensaje, color = MaterialTheme.colorScheme.error)
                         Spacer(modifier = Modifier.height(12.dp))
                         Button(onClick = { viewModel.cargarDetalle(registroId) }) {
                             Text("Reintentar")
                         }
                     }
                 }
-
                 is RegistroDetalleUiState.Success -> {
                     val registro = state.registro
                     LazyColumn(
@@ -114,7 +87,7 @@ fun DetalleScreen(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // Título y Número
+                        // Datos Generales
                         item {
                             Text(
                                 text = "${registro.numero}. ${registro.titulo}",
@@ -122,7 +95,6 @@ fun DetalleScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             if (registro.subtitulo.isNotBlank()) {
-                                Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = registro.subtitulo,
                                     style = MaterialTheme.typography.bodyMedium,
@@ -131,7 +103,7 @@ fun DetalleScreen(
                             }
                         }
 
-                        // Imagen Placeholder (Sin Coil para evitar errores de red)
+                        // Imagen Placeholder (Requerido: opción predeterminada)
                         item {
                             Box(
                                 modifier = Modifier
@@ -141,25 +113,17 @@ fun DetalleScreen(
                                     .background(MaterialTheme.colorScheme.surfaceVariant),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Icon(
-                                        imageVector = Icons.Default.Info,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(48.dp),
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                    if (!registro.imagen.isNullOrBlank()) {
-                                        Text(
-                                            text = "Imagen disponible en línea",
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
-                                }
+                                Icon(
+                                    imageVector = Icons.Default.Info,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(48.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
                             }
                         }
 
-                        // Sección de Video
+                        // Indicador de Video (Muestra que el dato llegó de la API)
+                        // No se incluye lógica de reproducción por ser responsabilidad del Grupo 1
                         if (!registro.video.isNullOrBlank()) {
                             item {
                                 Card(
@@ -169,47 +133,33 @@ fun DetalleScreen(
                                     ),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(16.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.PlayArrow,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(32.dp),
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                        Spacer(modifier = Modifier.width(12.dp))
-                                        Text(
-                                            text = "Video disponible",
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
+                                    Text(
+                                        modifier = Modifier.padding(16.dp),
+                                        text = "Video disponible (Cargado por API)",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
                         }
 
-                        // Cifrado
+                        // Sección Cifrado (descripcion)
                         item {
                             SectionCard(titulo = "Cifrado") {
                                 Text(
                                     text = registro.descripcion,
                                     fontFamily = FontFamily.Monospace,
-                                    fontSize = 14.sp,
-                                    lineHeight = 22.sp
+                                    fontSize = 14.sp
                                 )
                             }
                         }
 
-                        // Letra
+                        // Sección Letra (descripciondos)
                         item {
                             SectionCard(titulo = "Letra") {
                                 Text(
                                     text = registro.descripciondos,
-                                    fontSize = 15.sp,
-                                    lineHeight = 24.sp
+                                    fontSize = 15.sp
                                 )
                             }
                         }
@@ -221,10 +171,7 @@ fun DetalleScreen(
 }
 
 @Composable
-private fun SectionCard(
-    titulo: String,
-    content: @Composable () -> Unit
-) {
+private fun SectionCard(titulo: String, content: @Composable () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
@@ -234,7 +181,6 @@ private fun SectionCard(
             Text(
                 text = titulo,
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(8.dp))

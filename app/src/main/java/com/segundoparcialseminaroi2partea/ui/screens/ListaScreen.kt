@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,7 +45,7 @@ fun ListaScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Himnario") },
+                title = { Text("Himnario API") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
@@ -53,8 +53,6 @@ fun ListaScreen(
             )
         }
     ) { paddingValues ->
-
-        // Usamos PullToRefreshBox que es el estándar de Material 3
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = { viewModel.refrescar() },
@@ -68,53 +66,27 @@ fun ListaScreen(
                         CircularProgressIndicator()
                     }
                 }
-
                 is RegistroUiState.Error -> {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.WifiOff,
-                            contentDescription = null,
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = state.mensaje,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Icon(Icons.Default.Warning, contentDescription = null, modifier = Modifier.size(48.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(text = state.mensaje)
                         Button(onClick = { viewModel.cargarRegistros() }) {
                             Text("Reintentar")
                         }
                     }
                 }
-
                 is RegistroUiState.Success -> {
-                    if (state.registros.isEmpty()) {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(
-                                text = "No hay registros disponibles.",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(vertical = 8.dp)
-                        ) {
-                            items(
-                                items = state.registros,
-                                key = { it.id }
-                            ) { registro ->
-                                RegistroItem(
-                                    registro = registro,
-                                    onClick = onRegistroClick
-                                )
-                            }
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = 16.dp)
+                    ) {
+                        items(state.registros) { registro ->
+                            RegistroItem(registro = registro, onClick = onRegistroClick)
                         }
                     }
                 }
