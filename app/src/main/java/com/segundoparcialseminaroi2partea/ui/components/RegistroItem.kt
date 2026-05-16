@@ -2,23 +2,11 @@ package com.segundoparcialseminaroi2partea.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayCircle
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,7 +35,6 @@ fun RegistroItem(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Número del himno
             Box(
                 modifier = Modifier
                     .size(48.dp)
@@ -67,7 +54,6 @@ fun RegistroItem(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            // Título y subtítulo
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = registro.titulo,
@@ -77,7 +63,6 @@ fun RegistroItem(
                     overflow = TextOverflow.Ellipsis
                 )
                 if (registro.subtitulo.isNotBlank()) {
-                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = registro.subtitulo,
                         fontSize = 13.sp,
@@ -88,13 +73,12 @@ fun RegistroItem(
                 }
             }
 
-            // Icono indicador de video
             if (!registro.video.isNullOrBlank()) {
                 Icon(
-                    imageVector = Icons.Default.PlayCircle,
-                    contentDescription = "Tiene video",
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(22.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }
